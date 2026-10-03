@@ -70,3 +70,61 @@ test('bulk validation preserves individual findings and notices collisions', () 
   assert.deepEqual(checks[0], validate(entries[0], entries, now))
   assert.deepEqual(checks[1999], validate(entries[1999], entries, now))
 })
+test('impossible calendar dates cannot silently roll into another month', () => {
+  for (const measuredAt of ['2026-02-30T00:00:00Z', '2026-02-29T00:00:00Z', '2026-04-31T00:00:00Z', '2026-10-03T24:00:00Z', '2026-10-03T00:00:00+14:01', '2026-10-03T00:00:00']) {
+    const e = valid({ measuredAt }); assert.ok(validate(e, [e], now).some(f => f.code === 'time'), measuredAt)
+  }
+  const leap = valid({ measuredAt: '2024-02-29T23:10:15.123+09:00' })
+  assert.equal(validate(leap, [leap], now).length, 0)
+})
+test('confirmed duplicate exclusion preserves evidence and unblocks the original', () => {
+  const original = valid({ id: 'original' }), copy = valid({ id: 'copy' })
+  assert.throws(() => review(copy, [original, copy], 'excluded', '', now), /required/)
+  const excluded = review(copy, [original, copy], 'excluded', 'Confirmed duplicate import, retain original', now)
+  const session = [original, excluded]
+  assert.deepEqual(excluded.original, copy.original)
+  assert.equal(currentReading(excluded).measuredAt, copy.reading.measuredAt)
+  assert.equal(validate(original, session, now).length, 0)
+  assert.equal(validateAll(session, now)[0].length, 0)
+  const accepted = review(original, session, 'accepted', 'Original retained; duplicate excluded', now)
+  const bundle = exportFHIR([accepted, excluded], now)
+  const observations = bundle.entry.filter(e => e.resource.resourceType === 'Observation')
+  assert.equal(observations.length, 1)
+  assert.equal(observations[0].resource.identifier[0].value, 'original')
+})
+test('excluded observations need an explicit recheck before acceptance', () => {
+  const e = valid(), excluded = review(e, [e], 'excluded', 'Sample withdrawn', now)
+  assert.throws(() => review(excluded, [excluded], 'accepted', 'OK', now), /reopen/)
+  const restored = recheck(excluded, { ...excluded.reading, measuredAt: '2026-10-03T00:30:00Z' }, 'Fresh sample recorded')
+  const accepted = review(restored, [restored], 'accepted', 'Fresh sample checked', now)
+  assert.equal(accepted.review, 'accepted')
+  assert.equal(accepted.history.at(-3).action, 'Reviewer excluded')
+})
+test('unknown parameters and nonnumeric GPS never inherit configured rules', () => {
+  for (const parameter of ['constructor', '__proto__', 'unconfigured']) {
+    const e = valid({ parameter }); assert.ok(validate(e, [e], now).some(f => f.code === 'parameter'))
+  }
+  const e = valid({ latitude: true, longitude: '' })
+  assert.ok(validate(e, [e], now).some(f => f.code === 'coordinates'))
+})
+test('import, repair, human review and export keep both original and corrected evidence', () => {
+  const csv = 'id,site,parameter,value,unit,measuredAt,observer\nFIELD-1,Willow,ph,74,[pH],2026-10-03T00:00:00Z,Ada\n'
+  const [entry] = importObservations(csv, 'citizen.csv')
+  assert.throws(() => review(entry, [entry], 'accepted', 'Checks passed', now), /Resolve/)
+  const corrected = recheck(entry, { ...entry.reading, value: 7.4 }, 'Repeated measurement: decimal correction')
+  const accepted = review(corrected, [corrected], 'accepted', 'Instrument and site checked', now)
+  const bundle = exportFHIR([accepted], now), observation = bundle.entry[1].resource
+  assert.equal(entry.original.value, '74')
+  assert.equal(accepted.original.value, '74')
+  assert.equal(observation.valueQuantity.value, 7.4)
+  assert.ok(observation.note.some(n => /citizen.csv/.test(n.text)))
+  assert.ok(observation.note.some(n => /decimal correction/.test(n.text)))
+  assert.equal(accepted.synthetic, false)
+})
+test('imported synthetic labels survive review and FHIR export', () => {
+  const [entry] = importObservations('site,parameter,value,unit,measuredAt,observer,synthetic\nExample,ph,7.4,[pH],2026-10-03T00:00:00Z,Demo,true', 'example.csv')
+  assert.equal(entry.synthetic, true)
+  const accepted = review(entry, [entry], 'accepted', 'Synthetic example checked', now)
+  const observation = exportFHIR([accepted], now).entry[1].resource
+  assert.match(observation.note[0].text, /SYNTHETIC DEMO/)
+})

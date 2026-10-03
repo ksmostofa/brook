@@ -1,0 +1,5 @@
+id,site,parameter,value,unit,measuredAt,observer,synthetic,note
+SAMPLE-001,Example reach,ph,74,[pH],2026-10-01T09:00:00+09:00,Demo observer,true,Synthetic decimal-error example
+SAMPLE-002,Example reach,temperature,19.8,Cel,2026-10-01T09:00:00+09:00,Demo observer,true,Synthetic valid-reading example
+SAMPLE-003,Example reach,turbidity,12,NTU,2026-10-01T09:00:00+09:00,Demo observer,true,Synthetic duplicate original
+SAMPLE-004,Example reach,turbidity,12,NTU,2026-10-01T09:00:00+09:00,Demo observer,true,Synthetic duplicate copy

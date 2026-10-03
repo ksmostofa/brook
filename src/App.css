@@ -1018,3 +1018,25 @@
   white-space:normal;
   line-height:1.4}
 }
+
+.exclude-button {
+  width:100%;
+  margin-top:9px;
+  font-size:14px;
+  min-height:40px;
+}
+.excluded-pill {
+  color:var(--muted-foreground);
+  background:var(--muted);
+}
+.filter-buttons {
+  flex-wrap:wrap;
+}
+
+.import-tools {
+  flex-wrap:wrap;
+}
+.import-tools input {
+  min-width:180px;
+  flex:1 1 240px;
+}

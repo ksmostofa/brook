@@ -1,0 +1,25 @@
+This is Brook, a quality-review workbench for citizen observations of urban streams.
+
+The example session is synthetic. These readings do not describe real water, and Brook does not claim to tell anyone whether water is safe.
+
+The problem we address happens before analysis. A volunteer may miss a decimal point, copy the wrong unit or import the same reading twice. If those errors reach a dashboard unnoticed, later conclusions rest on questionable evidence.
+
+Here is the pH observation. The recorded value is seventy-four. Brook identifies that it falls outside the configured review range, explains the finding and asks us to check the instrument and repeat the reading. These are data-quality rules, not environmental-health thresholds.
+
+I cannot accept this observation while the finding remains. Instead, I record a recheck. For this synthetic demonstration, I enter seven point four and explain the decimal correction. The system keeps the original seventy-four. It appends the new reading and reason, then runs the checks again.
+
+A clean reading is still pending. I write a review note and accept it. The audit trail now records the import, recheck and decision. Opening the original record shows that the original value has not disappeared.
+
+Now look at these two turbidity observations. Different IDs do not mean different samples. The site, parameter, time, value and unit match. I confirm that the second entry is a duplicated import and exclude it with a reason.
+
+Exclusion does not delete the evidence or change its timestamp. The excluded entry remains in the archive. The retained original is no longer blocked by that copy and can go through normal review. A new recheck can reopen an excluded observation later.
+
+Brook accepts CSV and JSON from existing collection workflows. This downloadable example is explicitly synthetic. Importing it keeps that label, attaches the filename and starts every observation pending. Units are checked as recorded. Missing measurements never become zero. Impossible calendar dates are rejected rather than silently moved to another month.
+
+The workspace saves in this browser. The audit download contains original records, revisions and reviewer decisions. The current prototype does not authenticate reviewers or provide a tamper-proof database.
+
+The FHIR export includes accepted observations only. It links each observation to its collection location and includes source and review notes. Flagged, pending and excluded observations do not leave the review gate. This is FHIR R4-shaped output with project-local codes. Validation against the OneAquaHealth implementation guide remains pending.
+
+Eighteen domain tests pass, including the complete import, repair, human review and export sequence. The running application uses deterministic support, not an AI model. That matches the challenge's validation-check and human-review workflows without pretending a model did the work.
+
+The next evidence we need is field usability testing and paired professional measurements. Brook's contribution today is narrower and inspectable: show what is questionable, explain the next collection action and preserve the evidence behind the decision.

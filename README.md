@@ -22,7 +22,8 @@ The UI uses the requested shadcn Luma preset `b1VlJBjs` and selected RareUI comp
 3. Choose **Record a recheck**, enter pH `7.4`, and explain the repeated measurement or transcription correction. Save.
 4. Write a review note and accept the observation. Inspect the audit trail and original record. The original value is still `74`.
 5. Export accepted observations. The FHIR JSON includes the corrected reading and review notes, and excludes flagged and pending readings.
-6. Import your own CSV or JSON. Every imported reading starts pending. Reload to confirm browser persistence.
+6. Select `BRK-005`, add a note confirming the duplicated import, and choose **Exclude observation**. `BRK-004` can now be reviewed without editing either timestamp. Excluded data remains in the archive.
+7. Import your own CSV or JSON, or download the synthetic example from the import panel. Every imported reading starts pending. Reload to confirm browser persistence.
 
 The default fixture is conspicuously synthetic. Its coordinates and measurements do not describe an actual stream. Imported file names are retained as provenance labels, not verified evidence of authenticity.
 
@@ -35,7 +36,7 @@ id,site,parameter,value,unit,measuredAt,observer,latitude,longitude,note
 FIELD-001,Example stream,ph,7.4,[pH],2026-10-03T00:00:00Z,Field observer,35.92,139.48,Instrument reading
 ```
 
-`parameter` supports `temperature`, `ph`, `oxygen`, `turbidity`, and `conductivity`. Expected units are `Cel`, `[pH]`, `mg/L`, `NTU`, and `uS/cm`, respectively. Collection times require ISO date-time with an explicit time zone. CSV supports quoted commas and multiline fields. Imports append to the session. Limit: 2 MB file, 2,000 records per import.
+`parameter` supports `temperature`, `ph`, `oxygen`, `turbidity`, and `conductivity`. Expected units are `Cel`, `[pH]`, `mg/L`, `NTU`, and `uS/cm`, respectively. Collection times require a real calendar date and ISO date-time with an explicit time zone. Impossible dates do not silently roll into another month. CSV supports quoted commas and multiline fields. An optional `synthetic` field set to `true` marks demo data throughout review and export. Imports append to the session. Limit: 2 MB file, 2,000 records per import.
 
 Missing values remain missing. Brook never silently converts units. Imported unknown parameters or implausible values remain in the queue for review.
 
@@ -61,7 +62,7 @@ FHIR export produces an R4 collection `Bundle` with `Location` and `Observation`
 
 ## Validation and limits
 
-Run `node tests/run.mjs` for 12 focused domain tests. These verify input handling, duplicate checks, review gating, immutable originals and export exclusion. They do not establish real-world ecological validity or field usability.
+Run `node tests/run.mjs` for 18 focused domain tests. These verify input handling, duplicate checks, review gating, immutable originals and export exclusion. They do not establish real-world ecological validity or field usability. Tests also cover impossible dates, duplicate exclusion, reopening excluded readings, inherited parameter names, nonnumeric GPS and the complete import-to-export workflow.
 
 This MVP uses deterministic support, not an AI model. The challenge explicitly includes validation checks and human review. A later AI explanation layer should be evaluated against these rules and fail safely without changing measurements. Reviewer identities and qualifications are not authenticated. Field observations and validation ranges need independent domain review before a real deployment.
 
@@ -69,7 +70,9 @@ This MVP uses deterministic support, not an AI model. The challenge explicitly i
 
 - [Evidence and challenge fit](docs/evidence.md)
 - [Submission draft](docs/submission.md)
-- [Four-minute demo storyboard](docs/demo-storyboard.md)
+- [Demo storyboard](docs/demo-storyboard.md)
+- [Ready-to-read narration](docs/demo-narration.txt)
+- [Submission readiness](docs/submission-readiness.md)
 
 Do not claim a prize probability. The available evidence supports relevance to the challenge, not a prediction of how unknown judges will rank unknown final submissions.
 

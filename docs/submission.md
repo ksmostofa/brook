@@ -14,7 +14,7 @@ A field reading can be wrong for ordinary reasons: a decimal was missed, a unit 
 
 ## What Brook does
 
-Brook imports CSV or JSON and checks context, values, units, times, coordinates and possible duplicates. Each finding explains what triggered it and how to recheck. A recheck adds a reading and reason while preserving the original. A reviewer must write a note and resolve findings before acceptance. FHIR R4 export includes accepted readings only, with source and review history.
+Brook imports CSV or JSON and checks context, values, units, times, coordinates and possible duplicates. Each finding explains what triggered it and how to recheck. A recheck adds a reading and reason while preserving the original. A confirmed duplicate can be excluded with a reviewer reason, so nobody needs to fabricate a different timestamp to make the queue pass. Excluded entries stay in the archive. A reviewer must write a note and resolve findings before acceptance. FHIR R4 export includes accepted readings only, with source and review history.
 
 The demo fixture is entirely synthetic and visibly labelled. Imported data retains its file source. Brook does not calculate a water-safety score, verify contamination or diagnose risks to human health.
 
@@ -32,7 +32,7 @@ A suspicious reading does not prove unhealthy water. We kept plausibility checks
 
 ## Validation
 
-The domain test suite checks missing values, unit mismatches, range findings, future timestamps, coordinate bounds, equivalent-time-zone duplicates, preserved originals, review restrictions, CSV parsing, malformed imports and accepted-only export. These are software tests. They do not establish field accuracy or OneAquaHealth profile conformance.
+Eighteen passing domain tests check missing values, unit mismatches, range findings, future timestamps, coordinate bounds, equivalent-time-zone duplicates, preserved originals, impossible calendar dates, duplicate exclusion, review restrictions, synthetic labels, CSV parsing, malformed imports and the complete import, repair, review and accepted-only export sequence. These are software tests. They do not establish field accuracy or OneAquaHealth profile conformance.
 
 ## Limitations and next steps
 
