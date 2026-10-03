@@ -1,5 +1,7 @@
 # Brook
 
+[Open the working demo](https://ksmostofa.github.io/brook/). [Public source repository](https://github.com/ksmostofa/brook).
+
 A field-observation quality workbench for citizen science. Brook catches collection errors, explains the next recheck, preserves the original record and lets a reviewer accept data before export.
 
 Primary target: **OneAquaHealth IEEE Global Hackathon, Track 3: AI-Supported Assessment**. Secondary fit: Track 1 Citizen Science UX and Track 7 Digital Health Standards.
@@ -78,4 +80,4 @@ Do not claim a prize probability. The available evidence supports relevance to t
 
 ## Component credits
 
-[shadcn/ui](https://ui.shadcn.com) uses its MIT license. [Rare UI](https://rareui.com) components retain MIT + Commons Clause + Attribution. See `licenses/rare-ui.txt`.
+[shadcn/ui](https://ui.shadcn.com) uses its MIT license. [Rare UI](https://rareui.com) components use the exact plain-MIT upstream snapshot `c9a745c9cc04376f5a1abbd62d5fae9ea589944b`. Full copyright and permission notice is retained in `licenses/rare-ui.txt`; source hashes and license history are in [docs/rareui-provenance.md](docs/rareui-provenance.md). Current registry copies have different terms and are not used.

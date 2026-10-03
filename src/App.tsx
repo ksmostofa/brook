@@ -21,7 +21,9 @@ function load(): RecordEntry[] {
 }
 function download(name: string, body: string, type = 'application/json') {
   const url = URL.createObjectURL(new Blob([body], { type }))
-  const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url)
+  const a = document.createElement('a'); a.href = url; a.download = name
+  document.body.appendChild(a); a.click(); a.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 const time = (value: string) => Number.isFinite(Date.parse(value)) ? new Date(value).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Time missing'
 
